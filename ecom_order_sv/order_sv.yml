@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+  labels:
+    app: order-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-service
+  template:
+    metadata:
+      labels:
+        app: order-service
+    spec:
+      containers:
+        - name: order-service
+          image: ngquanghuyit/order_sv:v1.0.1
+          env:
+            - name: CART_SERVICE_URL
+              value: "http://cart-service:8000"
+            - name: ITEM_SERVICE_URL
+              value: "http://item-service:8000"
+            - name: CUSTOMER_SERVICE_URL
+              value: "http://customer-service:8000"
+            - name: PAYMENT_SERVICE_URL
+              value: "http://payment-service:8000"
+            - name: MYSQL_URL
+              value: "mysql://root:root@ecom_mysql_db:3306/order_db"
+            - name: DEBUG
+              value: "False"
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+spec:
+  selector:
+    app: order-service
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: order-service-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: order-service.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: order-service
+                port:
+                  number: 8000

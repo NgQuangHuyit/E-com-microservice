@@ -1,0 +1,11 @@
+product_id,features,updated_at
+67e3589ca21f190a6fad92c7,"{""type"": ""Book"", ""category"": ""book"", ""author"": ""reter"", ""publisher"": ""3242"", ""price_range"": ""low""}",2025-04-03 08:45:10
+67ed791ee1d9088051060a7d,"{""type"": ""Book"", ""category"": ""book"", ""author"": ""author a"", ""publisher"": ""kim dong"", ""price_range"": ""low""}",2025-04-03 08:45:10
+67ed792fe1d9088051060a7e,"{""type"": ""Book"", ""category"": ""book"", ""author"": ""author sadf"", ""publisher"": ""kim dong"", ""price_range"": ""medium""}",2025-04-03 08:45:10
+67ed7934e1d9088051060a7f,"{""type"": ""Book"", ""category"": ""book"", ""author"": ""author sadf"", ""publisher"": ""kim dong"", ""price_range"": ""medium""}",2025-04-03 08:45:10
+67ed7939e1d9088051060a80,"{""type"": ""Book"", ""category"": ""book"", ""author"": ""author sadf"", ""publisher"": ""kim dong"", ""price_range"": ""medium""}",2025-04-03 08:45:10
+67ed7947e1d9088051060a81,"{""type"": ""Book"", ""category"": ""story"", ""author"": ""author asdfe"", ""publisher"": ""kim dong"", ""price_range"": ""medium""}",2025-04-03 08:45:10
+67ed79e3e1d9088051060a82,"{""type"": ""Laptop"", ""category"": ""tech"", ""brand"": ""mac"", ""ram"": 16, ""price_range"": ""high""}",2025-04-03 08:45:10
+67ed7a07e1d9088051060a83,"{""type"": ""Laptop"", ""category"": ""tech"", ""brand"": ""lenovo"", ""ram"": 8, ""price_range"": ""high""}",2025-04-03 08:45:10
+67ed7a19e1d9088051060a84,"{""type"": ""Laptop"", ""category"": ""tech"", ""brand"": ""lenovo"", ""ram"": 8, ""price_range"": ""medium""}",2025-04-03 08:45:10
+67ed7a34e1d9088051060a85,"{""type"": ""Laptop"", ""category"": ""tech"", ""brand"": ""lenovo"", ""ram"": 8, ""price_range"": ""medium""}",2025-04-03 08:45:10

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: item-service
+  labels:
+    app: item-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: item-service
+  template:
+    metadata:
+      labels:
+        app: item-service
+    spec:
+      containers:
+        - name: item-service
+          image: ngquanghuyit/item_sv:v1.0.1
+          env:
+            - name: MONGO_URL
+              value: "mongodb://mongodb:27017/item_db"
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: item-service
+spec:
+  selector:
+    app: item-service
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: item-service-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: item-service.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: item-service
+                port:
+                  number: 8000

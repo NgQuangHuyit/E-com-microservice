@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  ecom_mysql_db:
+    image: mysql:8.0
+    container_name: ecom_mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: customer_db
+      MYSQL_USER: nqhuy
+      MYSQL_PASSWORD: 123456
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - project-network
+      - kind
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - kind
+      - project-network
+  item_sv:
+    image: ngquanghuyit/item_sv:v1.0.2
+    container_name: item_service
+#    entrypoint: ["tail", "-f", "/dev/null"]
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017/item_db
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+    networks:
+      - project-network
+  customer_sv:
+    image: ngquanghuyit/customer_sv:v1.0.0
+    container_name: customer_service
+#    entrypoint: ["tail", "-f", "/dev/null"]
+    environment:
+      - MYSQL_URL=mysql://nqhuy:123456@ecom_mysql_db:3306/customer_db
+    ports:
+      - "8001:8000"
+    networks:
+      - project-network
+
+  order_sv:
+    image: ngquanghuyit/order_sv:v1.0.0
+    container_name: order_service
+    #    entrypoint: ["tail", "-f", "/dev/null"]
+    environment:
+      - MYSQL_URL=mysql://root:root@ecom_mysql_db:3306/order_db
+    ports:
+      - "8000:8000"
+    depends_on:
+      - ecom_mysql_db
+    networks:
+      - project-network
+
+volumes:
+  mysql_data:
+    driver: local
+    name: ecom_cust_db
+  mongo_data:
+    driver: local
+    name: ecom_item_db
+
+networks:
+  kind:
+      external: true
+  project-network:
+    driver: bridge

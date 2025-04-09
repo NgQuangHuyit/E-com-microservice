@@ -1,0 +1,6 @@
+Django
+djangorestframework
+mongoengine
+psycopg2
+gunicorn
+requests

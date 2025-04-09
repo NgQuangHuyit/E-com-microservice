@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cart-service
+  labels:
+    app: cart-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cart-service
+  template:
+    metadata:
+      labels:
+        app: cart-service
+    spec:
+      containers:
+      - name: cart-service
+        image: ngquanghuyit/cart_sv:v1.0.0
+        env:
+        - name: MYSQL_URL
+          value: mysql://root:root@ecom_mysql_db:3306/cart_item_db
+        - name: CUSTOMER_SERVICE_URL
+          value: http://customer-service:8000/api/customers/
+        - name: PRODUCT_SERVICE_URL
+          value: http://item-service:8000/api/items/
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cart-service
+  labels:
+    app: cart-service
+spec:
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  selector:
+    app: cart-service
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cart-service-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: cart-service.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: cart-service
+                port:
+                  number: 8000
