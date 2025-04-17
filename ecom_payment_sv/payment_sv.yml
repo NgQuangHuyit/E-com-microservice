@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service
+  labels:
+    app: payment-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-service
+  template:
+    metadata:
+      labels:
+        app: payment-service
+    spec:
+      containers:
+      - name: payment-service
+        image: ngquanghuyit/cart_sv:v1.0.0
+        env:
+        - name: MYSQL_URL
+          value: mysql://root:root@ecom_mysql_db:3306/cart_item_db
+        - name: CUSTOMER_SERVICE_URL
+          value: http://customer-service:8000/api/customers/
+        - name: PRODUCT_SERVICE_URL
+          value: http://item-service:8000/api/items/
+        ports:
+        - containerPort: 8000

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Chatbot</title>
+    <style>
+        :root {
+            --primary: #4285f4;
+            --secondary: #34a853;
+            --danger: #ea4335;
+            --warning: #fbbc05;
+            --light: #f8f9fa;
+            --dark: #343a40;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        @media (min-width: 992px) {
+            .main-content {
+                flex-direction: row;
+                gap: 30px;
+            }
+        }
+
+        .chat-container {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 500px;
+        }
+
+        .chat-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-header .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-header .avatar i {
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message.bot {
+            align-items: flex-start;
+        }
+
+        .message.user {
+            align-items: flex-end;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 15px;
+            border-radius: 15px;
+            position: relative;
+        }
+
+        .message.bot .message-content {
+            background-color: var(--light);
+        }
+
+        .message.user .message-content {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .message-time {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .chat-input {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .chat-input input:focus {
+            border-color: var(--primary);
+        }
+
+        .chat-input button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 12px 20px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .chat-input button:hover {
+            background-color: #3367d6;
+        }
+
+        .result-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 20px;
+            min-height: 500px;
+        }
+
+        @media (min-width: 992px) {
+            .result-container {
+                width: 400px;
+            }
+        }
+
+        .result-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .symptom-checkboxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-item input {
+            margin-right: 8px;
+        }
+
+        .diagnosis-section {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .diagnosis-section.active {
+            display: block;
+        }
+
+        .diagnosis-heading {
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: var(--dark);
+        }
+
+        .diagnosis-result {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .diagnosis-label {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .confidence {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 14px;
+            margin-left: 8px;
+        }
+
+        .confidence.high {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .confidence.medium {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .confidence.low {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .recommendation {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .recommendation div {
+            margin-bottom: 8px;
+        }
+
+        .recommendation-label {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .result-plot {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+
+        .loading {
+            display: none;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary);
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .submit-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background-color: #3367d6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Healthcare Assistant Chatbot</h1>
+            <p>Check your symptoms and get AI-powered health advice</p>
+        </header>
+
+        <div class="main-content">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div class="avatar">
+                        <i>🤖</i>
+                    </div>
+                    <div>
+                        <h3>Healthcare Bot</h3>
+                    </div>
+                </div>
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message bot">
+                        <div class="message-content">
+                            Hello! I'm your virtual health assistant robot. Please check your symptoms in the panel on the right.
+                        </div>
+                        <div class="message-time">Just now</div>
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="message-input" placeholder="Type your message...">
+                    <button id="send-button">Send</button>
+                </div>
+            </div>
+
+            <div class="result-container">
+                <div class="result-header">Symptom Checker</div>
+                <div class="symptom-checkboxes" id="symptom-checkboxes">
+                    <!-- Checkboxes will be added dynamically -->
+                </div>
+                <button class="submit-btn" id="check-symptoms">Check My Symptoms</button>
+
+                <div class="loading" id="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Analyzing symptoms...</p>
+                </div>
+
+                <div class="diagnosis-section" id="diagnosis-section">
+                    <div class="diagnosis-heading">Diagnosis Results:</div>
+                    <div class="diagnosis-result">
+                        <div class="diagnosis-label">
+                            Most likely condition: <span id="diagnosis-name"></span>
+                            <span class="confidence" id="confidence-level"></span>
+                        </div>
+                        <div>Confidence score: <span id="confidence-score"></span></div>
+                        <div>Uncertainty: <span id="uncertainty"></span></div>
+                    </div>
+
+                    <div class="recommendation">
+                        <div><span class="recommendation-label">Recommended test:</span> <span id="recommended-test"></span></div>
+                        <div><span class="recommendation-label">Treatment:</span> <span id="recommended-treatment"></span></div>
+                    </div>
+
+                    <img id="result-plot" class="result-plot">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Available symptoms
+        const symptoms = ["Fever", "Cough", "Sneezing", "Fatigue", "Loss of Taste", "Itchy Eyes"];
+
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const symptomsContainer = document.getElementById('symptom-checkboxes');
+            const chatMessages = document.getElementById('chat-messages');
+            const messageInput = document.getElementById('message-input');
+            const sendButton = document.getElementById('send-button');
+            const checkSymptomsButton = document.getElementById('check-symptoms');
+            const loadingElement = document.getElementById('loading');
+            const diagnosisSection = document.getElementById('diagnosis-section');
+
+            // Populate symptom checkboxes
+            symptoms.forEach(symptom => {
+                const checkboxItem = document.createElement('div');
+                checkboxItem.className = 'checkbox-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = `symptom-${symptom.toLowerCase().replace(/\s+/g, '-')}`;
+                checkbox.name = symptom.toLowerCase();
+
+                const label = document.createElement('label');
+                label.htmlFor = checkbox.id;
+                label.textContent = symptom;
+
+                checkboxItem.appendChild(checkbox);
+                checkboxItem.appendChild(label);
+                symptomsContainer.appendChild(checkboxItem);
+            });
+
+            // Send a message when user clicks send button
+            sendButton.addEventListener('click', sendMessage);
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            // Check symptoms when button is clicked
+            checkSymptomsButton.addEventListener('click', checkSymptoms);
+
+            function sendMessage() {
+                const message = messageInput.value.trim();
+                if (!message) return;
+
+                // Add user message to chat
+                addMessage(message, 'user');
+                messageInput.value = '';
+
+                // Send request to process message (future enhancement)
+                // For now, just send a canned response
+                setTimeout(() => {
+                    addMessage("To check your health condition, please select your symptoms from the panel on the right and click 'Check My Symptoms'.", 'bot');
+                }, 700);
+            }
+
+            function checkSymptoms() {
+                // Collect symptoms
+                const symptomData = {};
+                symptoms.forEach(symptom => {
+                    const checkbox = document.getElementById(`symptom-${symptom.toLowerCase().replace(/\s+/g, '-')}`);
+                    symptomData[symptom.toLowerCase()] = checkbox.checked;
+                });
+
+                // Show loading
+                loadingElement.classList.add('active');
+                diagnosisSection.classList.remove('active');
+
+                // Add message to chat
+                let symptomText = "My symptoms are: ";
+                const selectedSymptoms = symptoms.filter(s => symptomData[s.toLowerCase()]);
+
+                if (selectedSymptoms.length === 0) {
+                    symptomText = "I don't have any symptoms";
+                } else {
+                    symptomText += selectedSymptoms.join(", ");
+                }
+
+                addMessage(symptomText, 'user');
+
+                // Make API call
+                fetch('/api/diagnose', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ symptoms: symptomData })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Process results
+                    displayResults(data);
+
+                    // Add bot response to chat
+                    const botResponse = `Based on your symptoms, you may have ${data.diagnosis} (confidence: ${data.confidence_level}).
+                                        I recommend a ${data.recommendation.test} and ${data.recommendation.treatment}.`;
+                    addMessage(botResponse, 'bot');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    addMessage("Sorry, I couldn't analyze your symptoms. Please try again.", 'bot');
+                })
+                .finally(() => {
+                    loadingElement.classList.remove('active');
+                });
+            }
+
+            function displayResults(data) {
+                // Display diagnosis information
+                document.getElementById('diagnosis-name').textContent = data.diagnosis;
+
+                const confidenceLevel = document.getElementById('confidence-level');
+                confidenceLevel.textContent = data.confidence_level;
+                confidenceLevel.className = `confidence ${data.confidence_level}`;
+
+                document.getElementById('confidence-score').textContent = (data.confidence_score * 100).toFixed(1) + '%';
+                document.getElementById('uncertainty').textContent = (data.uncertainty * 100).toFixed(1) + '%';
+
+                // Display recommendations
+                document.getElementById('recommended-test').textContent = data.recommendation.test;
+                document.getElementById('recommended-treatment').textContent = data.recommendation.treatment;
+
+                // Display plot
+                document.getElementById('result-plot').src = `data:image/png;base64,${data.plot}`;
+
+                // Show diagnosis section
+                diagnosisSection.classList.add('active');
+            }
+
+            function addMessage(message, sender) {
+                const messageElement = document.createElement('div');
+                messageElement.className = `message ${sender}`;
+
+                const contentElement = document.createElement('div');
+                contentElement.className = 'message-content';
+                contentElement.textContent = message;
+
+                const timeElement = document.createElement('div');
+                timeElement.className = 'message-time';
+                timeElement.textContent = 'Just now';
+
+                messageElement.appendChild(contentElement);
+                messageElement.appendChild(timeElement);
+
+                chatMessages.appendChild(messageElement);
+
+                // Scroll to the bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        });
+    </script>
+</body>
+</html>
