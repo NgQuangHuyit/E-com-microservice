@@ -49,9 +49,12 @@ class CustomerRegisterAPIView(APIView):
 
         if (data.get('phone') is None) and (data.get('email') is None):
             return Response({'error': 'Phone or email is required'}, status=status.HTTP_400_BAD_REQUEST)
-        if (data.get('phone') is not None and Customer.objects.filter(phone=data.get('phone')).exists()) or (Customer.objects.filter(email=data.get('email')).exists()):
+        if (data.get('phone') is not None and Customer.objects
+                .filter(phone=data.get('phone')).exists()) or (Customer.objects.filter(email=data.get('email')).exists()):
             return Response({'error': 'Phone or email is already used'}, status=status.HTTP_400_BAD_REQUEST)
-        if (data.get('email') is not None and Customer.objects.filter(email=data.get('email')).exists()) or (Customer.objects.filter(phone=data.get('phone')).exists()):
+        if ((data.get('email') is not None
+            and Customer.objects.filter(email=data.get('email')).exists())
+                or (Customer.objects.filter(phone=data.get('phone')).exists())):
             return Response({'error': 'Phone or email is already used'}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = CustomerSerializer(data=data)

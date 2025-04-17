@@ -10,10 +10,10 @@ from rest_framework.response import Response
 from .models import CartItem
 from .serializers import CartItemSerializer
 
-# CUSTOMER_SERVICE_URL = os.getenv("CUSTOMER_SERVICE_URL", "http://customer-service.local:30080/api/customers/")
-# PRODUCT_SERVICE_URL = os.getenv("PRODUCT_SERVICE_URL", "http://item-service.local:30080/api/books/")
-CUSTOMER_SERVICE_URL = os.getenv("CUSTOMER_SERVICE_URL", "http://localhost:8001/api/customers/")
-PRODUCT_SERVICE_URL = os.getenv("PRODUCT_SERVICE_URL", "http://localhost:8000/api/items/")
+CUSTOMER_SERVICE_URL = os.getenv("CUSTOMER_SERVICE_URL", "http://customer-service.local:30080/api/customers/")
+PRODUCT_SERVICE_URL = os.getenv("PRODUCT_SERVICE_URL", "http://item-service.local:30080/api/books/")
+# CUSTOMER_SERVICE_URL = os.getenv("CUSTOMER_SERVICE_URL", "http://localhost:8001/api/customers/")
+# PRODUCT_SERVICE_URL = os.getenv("PRODUCT_SERVICE_URL", "http://localhost:8000/api/items/")
 
 
 logger = logging.getLogger(__name__)

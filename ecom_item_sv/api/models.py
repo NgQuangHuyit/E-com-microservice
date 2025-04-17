@@ -50,12 +50,6 @@ class Item(Document):
         'allow_inheritance': True  # Cho phép kế thừa
     }
 
-    # Đặt tên collection trong MongoDB
-
-    #
-    # class Meta:
-    #     abstract = True
-
 # Clothes
 class Clothes(Item):
     size = StringField(max_length=10, required=True)

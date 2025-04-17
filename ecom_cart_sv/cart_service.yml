@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: cart-service
-        image: ngquanghuyit/cart_sv:v1.0.0
+        image: ngquanghuyit/cart_sv:1.0.2
         env:
         - name: MYSQL_URL
           value: mysql://root:root@ecom_mysql_db:3306/cart_item_db
